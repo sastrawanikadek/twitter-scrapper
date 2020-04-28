@@ -1,4 +1,5 @@
 import os
+import time
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
@@ -28,6 +29,7 @@ input_username.send_keys(os.environ.get('TWITTER_EMAIL'))
 input_password.send_keys(os.environ.get('TWITTER_PASSWORD'))
 form.submit()
 
+time.sleep(2)
 input_search = wait.until(lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
 input_search.send_keys('"pekerjaan saya sebagai" lang:id'+Keys.ENTER)
 
