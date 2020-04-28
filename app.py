@@ -55,7 +55,7 @@ page = 1
 while True:
     tweets = wait.until(lambda drv: drv.find_elements_by_css_selector('div[data-testid="tweet"]'))
     tweet_data = []
-    prev_tweet_index = 0
+    prev_tweet_index = -1
 
     for idx, tweet in enumerate(tweets):
         try:
@@ -88,12 +88,14 @@ while True:
                 'url': tweet_url
             }
             tweet_data.append(tweet_data_dict)
-            print(tweet_data_dict)
         except StaleElementReferenceException as exp:
             continue
 
-    data = tweet_data[prev_tweet_index:]
-
-    if len(data) > 0:
+    if len(tweet_data) > 0:
+        data = tweet_data[prev_tweet_index + 1:]
         collection.insert_many(data)
+        print(data)
+        print(f'-------------------PAGE {page}-------------------')
+        page += 1
+
     driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
