@@ -1,9 +1,8 @@
 import os
-import time
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from pymongo import MongoClient
 
 client = MongoClient(os.environ.get('MONGODB_URI'))
@@ -29,13 +28,19 @@ input_username.send_keys(os.environ.get('TWITTER_EMAIL'))
 input_password.send_keys(os.environ.get('TWITTER_PASSWORD'))
 form.submit()
 
-form = wait.until(lambda drv: drv.find_element_by_css_selector('form[action="/account/login_challenge"]'))
-input_phone = wait.until(lambda drv: drv.find_element_by_css_selector('input[name="challenge_response"]'))
-input_phone.send_keys(os.environ.get('TWITTER_PHONE'))
-form.submit()
+try:
+    input_search = wait.until(
+        lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
+    input_search.send_keys('"pekerjaan saya sebagai" lang:id' + Keys.ENTER)
+except TimeoutException as exp:
+    form = wait.until(lambda drv: drv.find_element_by_css_selector('form[action="/account/login_challenge"]'))
+    input_phone = wait.until(lambda drv: drv.find_element_by_css_selector('input[name="challenge_response"]'))
+    input_phone.send_keys(os.environ.get('TWITTER_PHONE'))
+    form.submit()
 
-input_search = wait.until(lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
-input_search.send_keys('"pekerjaan saya sebagai" lang:id'+Keys.ENTER)
+    input_search = wait.until(
+        lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
+    input_search.send_keys('"pekerjaan saya sebagai" lang:id'+Keys.ENTER)
 
 latest_button = wait.until(lambda drv: drv.find_element_by_link_text('Latest'))
 latest_button.click()
@@ -80,7 +85,7 @@ while True:
             }
             tweet_data.append(tweet_data_dict)
             print(tweet_data_dict)
-        except StaleElementReferenceException as Exception:
+        except StaleElementReferenceException as exp:
             continue
 
     data = tweet_data[prev_tweet_index:]
