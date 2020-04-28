@@ -24,8 +24,8 @@ form = driver.find_element_by_css_selector('form[action="/sessions"]')
 input_username = driver.find_element_by_name('session[username_or_email]')
 input_password = driver.find_element_by_name('session[password]')
 
-input_username.send_keys('vongoladeci@gmail.com')
-input_password.send_keys('kadek141199')
+input_username.send_keys(os.environ.get('TWITTER_EMAIL'))
+input_password.send_keys(os.environ.get('TWITTER_PASSWORD'))
 form.submit()
 
 input_search = wait.until(lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
