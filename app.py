@@ -93,9 +93,10 @@ while True:
 
     if len(tweet_data) > 0:
         print(f'-------------------PAGE {page}-------------------')
-        print(f'PREVIOUS INDEX: {prev_tweet_index}')
-        print(f'LATEST ID: {latest_id}')
-        print(f'PREVIOUS ID: {tweet_data[prev_tweet_index].tweet_id}')
+        if page > 1:
+            print(f'PREVIOUS INDEX: {prev_tweet_index}')
+            print(f'LATEST ID: {latest_id}')
+            print(f'PREVIOUS ID: {tweet_data[prev_tweet_index].tweet_id}')
         data = tweet_data[prev_tweet_index + 1:]
         print(f'FIRST DATA ID: {data[0].tweet_id}')
         collection.insert_many(data)
