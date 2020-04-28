@@ -93,5 +93,7 @@ while True:
             continue
 
     data = tweet_data[prev_tweet_index:]
-    collection.insert_many(data)
+
+    if len(data) > 0:
+        collection.insert_many(data)
     driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
