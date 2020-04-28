@@ -16,7 +16,7 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 chrome_options.add_argument('--no-sandbox')
 
 driver = Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), chrome_options=chrome_options)
-wait = WebDriverWait(driver, 15)
+wait = WebDriverWait(driver, 50)
 driver.get('https://twitter.com/login')
 driver.implicitly_wait(15)
 
