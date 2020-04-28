@@ -29,17 +29,19 @@ input_password.send_keys(os.environ.get('TWITTER_PASSWORD'))
 form.submit()
 
 try:
-    print(driver.find_element_by_tag_name('body').get_attribute('innerHTML'))
+    explore_button = wait.until(lambda drv: drv.find_element_by_css_selector('a[href="/explore"]'))
+    explore_button.click()
     input_search = wait.until(
         lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
     input_search.send_keys('"pekerjaan saya sebagai" lang:id' + Keys.ENTER)
 except TimeoutException as exp:
-    print(driver.find_element_by_tag_name('body').get_attribute('innerHTML'))
     form = wait.until(lambda drv: drv.find_element_by_css_selector('form[action="/account/login_challenge"]'))
     input_phone = wait.until(lambda drv: drv.find_element_by_css_selector('input[name="challenge_response"]'))
     input_phone.send_keys(os.environ.get('TWITTER_PHONE'))
     form.submit()
 
+    explore_button = wait.until(lambda drv: drv.find_element_by_css_selector('a[href="/explore"]'))
+    explore_button.click()
     input_search = wait.until(
         lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
     input_search.send_keys('"pekerjaan saya sebagai" lang:id'+Keys.ENTER)
