@@ -16,7 +16,7 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 chrome_options.add_argument('--no-sandbox')
 
 driver = Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), chrome_options=chrome_options)
-wait = WebDriverWait(driver, 50)
+wait = WebDriverWait(driver, 15)
 driver.get('https://twitter.com/login')
 driver.implicitly_wait(15)
 
@@ -28,6 +28,7 @@ input_username.send_keys(os.environ.get('TWITTER_EMAIL'))
 input_password.send_keys(os.environ.get('TWITTER_PASSWORD'))
 form.submit()
 
+driver.implicitly_wait(15)
 input_search = wait.until(lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
 input_search.send_keys('"pekerjaan saya sebagai" lang:id'+Keys.ENTER)
 
