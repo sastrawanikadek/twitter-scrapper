@@ -98,7 +98,7 @@ while True:
             print(f'LAST ID: {last_id}')
             print(f'PREVIOUS DATA: {tweet_data[prev_tweet_index]}')
         data = tweet_data[prev_tweet_index + 1:]
-        print(f'FIRST DATA: {data[0]}')
+        print(data)
         # collection.insert_many(data)
         # print(data)
         page += 1
