@@ -63,7 +63,7 @@ while True:
                 prev_tweet_index = idx
 
             latest_id = tweet_id
-            tweet_data.append({
+            tweet_data_dict = {
                 'tweet_id': tweet_id,
                 'avatar': tweet_avatar,
                 'name': tweet_name,
@@ -71,7 +71,9 @@ while True:
                 'caption': tweet_caption,
                 'datetime': tweet_datetime,
                 'url': tweet_url
-            })
+            }
+            tweet_data.append(tweet_data_dict)
+            print(tweet_data_dict)
         except StaleElementReferenceException as Exception:
             continue
 
