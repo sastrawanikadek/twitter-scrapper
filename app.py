@@ -92,10 +92,14 @@ while True:
             continue
 
     if len(tweet_data) > 0:
-        data = tweet_data[prev_tweet_index + 1:]
-        collection.insert_many(data)
-        print(data)
         print(f'-------------------PAGE {page}-------------------')
+        print(f'PREVIOUS INDEX: {prev_tweet_index}')
+        print(f'LATEST ID: {latest_id}')
+        print(f'PREVIOUS ID: {tweet_data[prev_tweet_index].tweet_id}')
+        data = tweet_data[prev_tweet_index + 1:]
+        print(f'FIRST DATA ID: {data[0].tweet_id}')
+        collection.insert_many(data)
+        # print(data)
         page += 1
 
     driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
