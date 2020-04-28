@@ -29,7 +29,11 @@ input_username.send_keys(os.environ.get('TWITTER_EMAIL'))
 input_password.send_keys(os.environ.get('TWITTER_PASSWORD'))
 form.submit()
 
-time.sleep(2)
+form = wait.until(lambda drv: drv.find_element_by_css_selector('form[action="/account/login_challenge"]'))
+input_phone = wait.until(lambda drv: drv.find_element_by_css_selector('input[name="challenge_response"]'))
+input_phone.send_keys(os.environ.get('TWITTER_PHONE'))
+form.submit()
+
 input_search = wait.until(lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
 input_search.send_keys('"pekerjaan saya sebagai" lang:id'+Keys.ENTER)
 
