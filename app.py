@@ -49,13 +49,8 @@ except TimeoutException as exp:
 latest_button = wait.until(lambda drv: drv.find_element_by_link_text('Latest'))
 latest_button.click()
 
-last_id = ""
-page = 1
-
 while True:
     tweets = wait.until(lambda drv: drv.find_elements_by_css_selector('div[data-testid="tweet"]'))
-    tweet_data = []
-    prev_tweet_index = -1
 
     for idx, tweet in enumerate(tweets):
         try:
@@ -74,32 +69,18 @@ while True:
             tweet_url = url_element.get_attribute('href')
             tweet_id = tweet_url[tweet_url.rfind('/') + 1:]
 
-            if tweet_id == last_id:
-                prev_tweet_index = idx
-
-            tweet_data_dict = {
-                'tweet_id': tweet_id,
-                'avatar': tweet_avatar,
-                'name': tweet_name,
-                'username': tweet_username,
-                'caption': tweet_caption,
-                'datetime': tweet_datetime,
-                'url': tweet_url
-            }
-            tweet_data.append(tweet_data_dict)
+            if not collection.find_one({'tweet_id': tweet_id}):
+                tweet_data_dict = {
+                    'tweet_id': tweet_id,
+                    'avatar': tweet_avatar,
+                    'name': tweet_name,
+                    'username': tweet_username,
+                    'caption': tweet_caption,
+                    'datetime': tweet_datetime,
+                    'url': tweet_url
+                }
+                collection.insert_one(tweet_data_dict)
         except StaleElementReferenceException as exp:
             continue
-
-    if len(tweet_data) > 0:
-        print(len(tweet_data))
-        last_id = tweet_data[-1]['tweet_id']
-        print(f'-------------------PAGE {page}-------------------')
-        data = tweet_data[prev_tweet_index + 1:]
-        print("Last ID", last_id)
-        print("Tweets", tweet_data)
-        print("Data", data)
-        # collection.insert_many(data)
-        # print(data)
-        page += 1
 
     driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
