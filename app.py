@@ -2,7 +2,7 @@ import os
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException, NoSuchElementException
 from pymongo import MongoClient
 
 client = MongoClient(os.environ.get('MONGODB_URI'))
@@ -34,7 +34,7 @@ try:
     input_search = wait.until(
         lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
     input_search.send_keys('"pekerjaan saya sebagai" lang:id' + Keys.ENTER)
-except TimeoutException as exp:
+except TimeoutException:
     form = wait.until(lambda drv: drv.find_element_by_css_selector('form[action="/account/login_challenge"]'))
     input_phone = wait.until(lambda drv: drv.find_element_by_css_selector('input[name="challenge_response"]'))
     input_phone.send_keys(os.environ.get('TWITTER_PHONE'))
@@ -52,7 +52,7 @@ latest_button.click()
 while True:
     tweets = wait.until(lambda drv: drv.find_elements_by_css_selector('div[data-testid="tweet"]'))
 
-    for idx, tweet in enumerate(tweets):
+    for tweet in tweets:
         try:
             url_element = tweet.find_element_by_css_selector('a.r-3s2u2q')
             time_element = tweet.find_element_by_css_selector('a.r-3s2u2q time')
@@ -80,7 +80,7 @@ while True:
                     'url': tweet_url
                 }
                 collection.insert_one(tweet_data_dict)
-        except StaleElementReferenceException as exp:
+        except (StaleElementReferenceException, NoSuchElementException):
             continue
 
     driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
