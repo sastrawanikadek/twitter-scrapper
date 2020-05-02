@@ -61,7 +61,7 @@ while True:
     if temp_total_documents == total_documents:
         if retry == max_retry:
             retry = 0
-            query_index = query_index + 1 if query_index < len(query_index) - 1 else 0
+            query_index = query_index + 1 if query_index < len(queries) - 1 else 0
             input_search = wait.until(
                 lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
             input_search.send_keys(f'"{queries[query_index]}" lang:id{Keys.ENTER}')
