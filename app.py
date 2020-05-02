@@ -68,6 +68,7 @@ while True:
         else:
             retry += 1
 
+    print(driver.find_element_by_tag_name('body').get_attribute('innerHTML'))
     tweets = wait.until(lambda drv: drv.find_elements_by_css_selector('div[data-testid="tweet"]'))
 
     for tweet in tweets:
