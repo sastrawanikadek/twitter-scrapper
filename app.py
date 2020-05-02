@@ -8,6 +8,12 @@ from pymongo import MongoClient
 client = MongoClient(os.environ.get('MONGODB_URI'))
 db = client['big-data']
 collection = db['tweets']
+total_documents = collection.count_documents({})
+queries = ['pekerjaan saya sebagai', 'saya bekerja sebagai', 'saya mendapatkan pekerjaan sebagai',
+           'karir saya sebagai']
+query_index = 0
+retry = 0
+max_retry = 3
 
 chrome_options = ChromeOptions()
 chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
@@ -33,7 +39,7 @@ try:
     explore_button.click()
     input_search = wait.until(
         lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
-    input_search.send_keys('"pekerjaan saya sebagai" lang:id' + Keys.ENTER)
+    input_search.send_keys(f'"{queries[query_index]}" lang:id{Keys.ENTER}')
 except TimeoutException:
     form = wait.until(lambda drv: drv.find_element_by_css_selector('form[action="/account/login_challenge"]'))
     input_phone = wait.until(lambda drv: drv.find_element_by_css_selector('input[name="challenge_response"]'))
@@ -44,12 +50,24 @@ except TimeoutException:
     explore_button.click()
     input_search = wait.until(
         lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
-    input_search.send_keys('"pekerjaan saya sebagai" lang:id'+Keys.ENTER)
+    input_search.send_keys(f'"{queries[query_index]}" lang:id{Keys.ENTER}')
 
 latest_button = wait.until(lambda drv: drv.find_element_by_link_text('Latest'))
 latest_button.click()
 
 while True:
+    temp_total_documents = collection.count_documents({})
+
+    if temp_total_documents == total_documents:
+        if retry == max_retry:
+            retry = 0
+            query_index = query_index + 1 if query_index < len(query_index) - 1 else 0
+            input_search = wait.until(
+                lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
+            input_search.send_keys(f'"{queries[query_index]}" lang:id{Keys.ENTER}')
+        else:
+            retry += 1
+
     tweets = wait.until(lambda drv: drv.find_elements_by_css_selector('div[data-testid="tweet"]'))
 
     for tweet in tweets:
@@ -83,4 +101,5 @@ while True:
         except (StaleElementReferenceException, NoSuchElementException):
             continue
 
+    total_documents = temp_total_documents
     driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
