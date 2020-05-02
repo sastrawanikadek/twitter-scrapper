@@ -65,42 +65,45 @@ while True:
             input_search = wait.until(
                 lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
             input_search.send_keys(f'"{queries[query_index]}" lang:id{Keys.ENTER}')
-            driver.implicitly_wait(15)
         else:
             retry += 1
 
-    tweets = wait.until(lambda drv: drv.find_elements_by_css_selector('div[data-testid="tweet"]'))
+    try:
+        tweets = wait.until(lambda drv: drv.find_elements_by_css_selector('div[data-testid="tweet"]'))
 
-    for tweet in tweets:
-        try:
-            url_element = tweet.find_element_by_css_selector('a.r-3s2u2q')
-            time_element = tweet.find_element_by_css_selector('a.r-3s2u2q time')
-            avatar_element = tweet.find_element_by_css_selector('img.css-9pa8cd')
-            name_element = tweet.find_element_by_css_selector('a span span.css-901oao')
-            username_element = tweet.find_element_by_css_selector('a div.r-1f6r7vd span')
-            caption_element = tweet.find_element_by_css_selector('div.r-bnwqim')
+        for tweet in tweets:
+            try:
+                url_element = tweet.find_element_by_css_selector('a.r-3s2u2q')
+                time_element = tweet.find_element_by_css_selector('a.r-3s2u2q time')
+                avatar_element = tweet.find_element_by_css_selector('img.css-9pa8cd')
+                name_element = tweet.find_element_by_css_selector('a span span.css-901oao')
+                username_element = tweet.find_element_by_css_selector('a div.r-1f6r7vd span')
+                caption_element = tweet.find_element_by_css_selector('div.r-bnwqim')
 
-            tweet_avatar = avatar_element.get_attribute('src')
-            tweet_name = name_element.text
-            tweet_username = username_element.text
-            tweet_caption = caption_element.text
-            tweet_datetime = time_element.get_attribute('datetime')
-            tweet_url = url_element.get_attribute('href')
-            tweet_id = tweet_url[tweet_url.rfind('/') + 1:]
+                tweet_avatar = avatar_element.get_attribute('src')
+                tweet_name = name_element.text
+                tweet_username = username_element.text
+                tweet_caption = caption_element.text
+                tweet_datetime = time_element.get_attribute('datetime')
+                tweet_url = url_element.get_attribute('href')
+                tweet_id = tweet_url[tweet_url.rfind('/') + 1:]
 
-            if not collection.find_one({'tweet_id': tweet_id}):
-                tweet_data_dict = {
-                    'tweet_id': tweet_id,
-                    'avatar': tweet_avatar,
-                    'name': tweet_name,
-                    'username': tweet_username,
-                    'caption': tweet_caption,
-                    'datetime': tweet_datetime,
-                    'url': tweet_url
-                }
-                collection.insert_one(tweet_data_dict)
-        except (StaleElementReferenceException, NoSuchElementException):
-            continue
+                if not collection.find_one({'tweet_id': tweet_id}):
+                    tweet_data_dict = {
+                        'tweet_id': tweet_id,
+                        'avatar': tweet_avatar,
+                        'name': tweet_name,
+                        'username': tweet_username,
+                        'caption': tweet_caption,
+                        'datetime': tweet_datetime,
+                        'url': tweet_url
+                    }
+                    collection.insert_one(tweet_data_dict)
+            except (StaleElementReferenceException, NoSuchElementException):
+                continue
 
-    total_documents = temp_total_documents
-    driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
+        total_documents = temp_total_documents
+        driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
+    except TimeoutException:
+        print(driver.find_element_by_tag_name('body').get_attribute('innerHTML'))
+        break
