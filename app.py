@@ -64,7 +64,8 @@ while True:
             query_index = query_index + 1 if query_index < len(queries) - 1 else 0
             input_search = wait.until(
                 lambda drv: drv.find_element_by_css_selector('input[data-testid="SearchBox_Search_Input"]'))
-            input_search.send_keys(Keys.chord(Keys.CONTROL, "a"), f'"{queries[query_index]}" lang:id{Keys.ENTER}')
+            input_search.send_keys(Keys.CONTROL, 'a')
+            input_search.send_keys(f'"{queries[query_index]}" lang:id{Keys.ENTER}')
         else:
             retry += 1
 
