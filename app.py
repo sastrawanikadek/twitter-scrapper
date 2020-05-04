@@ -10,7 +10,10 @@ db = client['big-data']
 collection = db['tweets']
 total_documents = collection.count_documents({})
 queries = ['pekerjaan saya sebagai', 'saya bekerja sebagai', 'saya mendapatkan pekerjaan sebagai',
-           'karir saya sebagai']
+           'karir saya sebagai', 'aku bekerja sebagai', 'gw bekerja sebagai', 'gua bekerja sebagai',
+           'pekerjaanku sebagai', 'pekerjaan ku sebagai', 'pekerjaan gw sebagai', 'pekerjaan gua sebagai',
+           'pekerjaanku sbg', 'pekerjaan ku sbg', 'ayahku bekerja sebagai', 'aku bekerja menjadi',
+           'saya bekerja menjadi', 'saya sudah bekerja sebagai']
 query_index = 0
 retry = 0
 max_retry = 3
